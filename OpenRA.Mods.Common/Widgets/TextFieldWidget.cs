@@ -127,18 +127,48 @@ namespace OpenRA.Mods.Common.Widgets
 			if (e.Key == Keycode.LALT && OnAltKey())
 				return true;
 
+			Func<string, int, int> GetPrevWhitespaceIndex = (str, pos) =>
+				str.Substring(0, pos).TrimEnd().LastIndexOf(' ') + 1;
+
+			Func<string, int, int> GetNextWhitespaceIndex = (str, pos) => {
+				// char[] charArray = str.ToCharArray();
+				// Array.Reverse( charArray );
+				// var reverse_index = GetPrevWhitespaceIndex(new string(charArray), str.Length - pos);
+				// return str.Length - reverse_index;
+				var original_size = Text.Substring(CursorPosition).Length;
+				var trimmed = Text.Substring(CursorPosition).TrimStart();
+				var trimmed_spaces = original_size - trimmed.Length;
+				return CursorPosition + trimmed_spaces + trimmed.IndexOf(' ');
+				// return CursorPosition + increment_me;
+			};
+
 			if (e.Key == Keycode.LEFT)
 			{
 				if (CursorPosition > 0)
-					CursorPosition--;
+				{
+					if ((Platform.CurrentPlatform != PlatformType.OSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) ||
+					(Platform.CurrentPlatform == PlatformType.OSX && e.Modifiers.HasModifier(Modifiers.Alt)))
+					{
+						CursorPosition = GetPrevWhitespaceIndex(Text, CursorPosition);
+					} else {
+						CursorPosition--;
+					}
+				}
 
 				return true;
 			}
 
 			if (e.Key == Keycode.RIGHT)
 			{
-				if (CursorPosition <= Text.Length - 1)
-					CursorPosition++;
+				if (CursorPosition <= Text.Length - 1) {
+					if ((Platform.CurrentPlatform != PlatformType.OSX && e.Modifiers.HasModifier(Modifiers.Ctrl)) ||
+					(Platform.CurrentPlatform == PlatformType.OSX && e.Modifiers.HasModifier(Modifiers.Alt)))
+					{
+						CursorPosition = GetNextWhitespaceIndex(Text, CursorPosition);
+					} else {
+						CursorPosition++;
+					}
+				}
 
 				return true;
 			}
