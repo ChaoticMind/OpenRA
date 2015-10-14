@@ -39,16 +39,16 @@ namespace OpenRA.Mods.Common.AI
 		public readonly HashSet<string> DefenseQueues = new HashSet<string> { "Defense" };
 
 		[Desc("Delay (in ticks) between giving out orders to units.")]
-		public readonly int AssignRolesInterval = 20;
+		public readonly int AssignRolesInterval = SecondsToTicks(0.8);
 
 		[Desc("Delay (in ticks) between attempting rush attacks.")]
-		public readonly int RushInterval = 600;
+		public readonly int RushInterval = SecondsToTicks(24);
 
 		[Desc("Delay (in ticks) between updating squads.")]
-		public readonly int AttackForceInterval = 30;
+		public readonly int AttackForceInterval = SecondsToTicks(1.2);
 
 		[Desc("Minimum delay (in ticks) between creating squads.")]
-		public readonly int MinimumAttackForceDelay = 0;
+		public readonly int MinimumAttackForceDelay = SecondsToTicks(0);
 
 		[Desc("Minimum portion of pending orders to issue each tick (e.g. 5 issues at least 1/5th of all pending orders). Excess orders remain queued for subsequent ticks.")]
 		public readonly int MinOrderQuotientPerTick = 5;
@@ -58,17 +58,17 @@ namespace OpenRA.Mods.Common.AI
 
 		[Desc("Additional delay (in ticks) between structure production checks when there is no active production.",
 			"StructureProductionRandomBonusDelay is added to this.")]
-		public readonly int StructureProductionInactiveDelay = 125;
+		public readonly int StructureProductionInactiveDelay = SecondsToTicks(5);
 
 		[Desc("Additional delay (in ticks) added between structure production checks when actively building things.",
 			"Note: The total delay is gamespeed OrderLatency x 4 + this + StructureProductionRandomBonusDelay.")]
-		public readonly int StructureProductionActiveDelay = 0;
+		public readonly int StructureProductionActiveDelay = SecondsToTicks(0);
 
 		[Desc("A random delay (in ticks) of up to this is added to active/inactive production delays.")]
-		public readonly int StructureProductionRandomBonusDelay = 10;
+		public readonly int StructureProductionRandomBonusDelay = SecondsToTicks(0.4);
 
 		[Desc("Delay (in ticks) until retrying to build structure after the last 3 consecutive attempts failed.")]
-		public readonly int StructureProductionResumeDelay = 1500;
+		public readonly int StructureProductionResumeDelay = SecondsToTicks(60);
 
 		[Desc("After how many failed attempts to place a structure should AI give up and wait",
 			"for StructureProductionResumeDelay before retrying.")]
@@ -78,7 +78,7 @@ namespace OpenRA.Mods.Common.AI
 		public readonly int MaxResourceCellsToCheck = 3;
 
 		[Desc("Delay (in ticks) until rechecking for new BaseProviders.")]
-		public readonly int CheckForNewBasesDelay = 1500;
+		public readonly int CheckForNewBasesDelay = SecondsToTicks(60);
 
 		[Desc("Minimum range at which to build defensive structures near a combat hotspot.")]
 		public readonly int MinimumDefenseRadius = 5;
@@ -146,6 +146,8 @@ namespace OpenRA.Mods.Common.AI
 		[Desc("Tells the AI how to use its support powers.")]
 		[FieldLoader.LoadUsing("LoadDecisions")]
 		public readonly List<SupportPowerDecision> PowerDecisions = new List<SupportPowerDecision>();
+
+		static int SecondsToTicks(double seconds) {return (int)seconds * 25;}
 
 		static object LoadDecisions(MiniYaml yaml)
 		{
